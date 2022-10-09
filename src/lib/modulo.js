@@ -1,0 +1,1 @@
+export const modulo = (c,n) => ((c % n) + n) % n;
