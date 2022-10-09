@@ -7,12 +7,13 @@ const CopyPlugin = require("copy-webpack-plugin");
 const config = {
     devtool: "source-map",
     plugins: [
+        /*
         new CopyPlugin({
             patterns: [
                // { from: "assets", to: "assets" },
                 //            { from: "favicon.ico", to: "favicon.ico" },
             ],
-        }),
+        }),*/
         new HtmlWebpackPlugin({
             hash: true,
             filename: './index.html', //relative to root of the application,
