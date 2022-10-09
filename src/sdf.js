@@ -13,12 +13,13 @@ export class Sphere {
         return this.center.distanceTo(p) - this.radius
     }
 }
-const q = new Vector3()
-const q1 = new Vector3()
-const v000 = new Vector3(0,0,0)
+//const q = new Vector3()
 
 export class Box {
     //static #q = new Vector3()
+    static q = new Vector3()
+    static q1 = new Vector3()
+    static v000 = new Vector3(0, 0, 0)
     /*
     
 float sdBox( vec3 p, vec3 b )
@@ -27,15 +28,16 @@ float sdBox( vec3 p, vec3 b )
   return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
 }
 */
-    constructor(x,y,z){
-        Object.assign(this,{
-            b : new Vector3(x,y,z),
+    constructor(x, y, z) {
+        Object.assign(this, {
+            b: new Vector3(x, y, z),
         })
     }
-    sdf(p){
-        q.set(Math.abs(p.x),Math.abs(p.y),Math.abs(p.z)).sub(this.b)
-        const t1 = q1.copy(q).max(v000).length()
-        const t2 = Math.min(Math.max(q.x,Math.max(q.y,q.z)),0)
+    sdf(p) {
+        const q = Box.q
+        Box.q.set(Math.abs(p.x), Math.abs(p.y), Math.abs(p.z)).sub(this.b)
+        const t1 = Box.q1.copy(Box.q).max(Box.v000).length()
+        const t2 = Math.min(Math.max(Box.q.x, Math.max(Box.q.y, Box.q.z)), 0)
         return t1 + t2
     }
 }

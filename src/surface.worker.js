@@ -2,7 +2,7 @@ import { surfaceNets } from 'isosurface'
 import { cellPositionMeshToVerticesArray, verticesToPositionNormal } from './geometry.js'
 const clog = txt => console.log("%c[surface-worker]%c " + txt, "color:orange;background-color:black;", "color:black")
 import { Vector3 } from 'three'
-import { Sphere, Subtraction, Union, Intersection, Box} from './sdf.js'
+import { Sphere, Subtraction, Union, Intersection, Box } from './sdf.js'
 
 onmessage = function (e) {
     const startedAt = performance.now()
@@ -13,12 +13,20 @@ onmessage = function (e) {
     //const spheres = new Union(sphere0,sphere1)
     //   const spheres = new Intersection(sphere0, sphere1)
     const spheres = new Subtraction(sphere0, sphere1)
-    const box = new Box(1,2,4)
+    const box = new Box(1, 2, 4)
 
     const shape = new Subtraction(
-        box,
-        spheres,
-        
+        new Box(20,2,2),
+        new Union(
+            new Subtraction(
+                box,
+                spheres,
+            ),
+            new Subtraction(
+                new Box(3, 10, 3),
+                new Sphere(5, 0, 0, 5)
+            )
+        )
     )
 
     const p = new Vector3()
