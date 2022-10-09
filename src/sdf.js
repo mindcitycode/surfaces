@@ -66,3 +66,25 @@ export class Subtraction {
     }
 }
 
+
+export class CachedShape {
+
+    // is slower for not so complex shapes
+
+    #cache = new Map()
+    constructor(shape) {
+        Object.assign(this, { shape })
+    }
+    sdf(p) {
+        //            const id = `${p.x}_${p.y}_${p.z}`
+        const id = [p.x, p.y, p.z].join('_')
+        const cached = this.#cache.get(id)
+        if (cached) {
+            return cached
+        } else {
+            const sdf = this.shape.sdf(p)
+            this.#cache.set(id, sdf)
+            return sdf
+        }
+    }
+}
