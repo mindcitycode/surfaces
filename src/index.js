@@ -10,6 +10,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+scene.add(new THREE.AxesHelper(10,10,10))
+
 const ambientLight = new THREE.AmbientLight()
 ambientLight.intensity = 0.5
 scene.add(ambientLight);
@@ -29,7 +31,9 @@ rafLoop((delta, time) => {
 const surfaceWorker = new Worker(new URL("./surface.worker.js", import.meta.url))
 surfaceWorker.onmessage = event => {
     const geometry = positionNormalToThreeGeometry(event.data)
-    const material = new THREE.MeshStandardMaterial({})
+    const material = new THREE.MeshStandardMaterial({
+        //wireframe:true
+    })
     const mesh = new THREE.Mesh(geometry, material);    
     scene.add(mesh)
 };
