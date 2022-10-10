@@ -14,38 +14,45 @@ onmessage = function (e) {
     const spheres = new Subtraction(sphere0, sphere1)
     const box = new Box(1, 2, 4)
 
-    const shape0 = new Intersection(
-        new Union(
-            new Box(1, 1, 2),
-            new Subtraction(
-                new Box(20, 2, 2),
-                new Union(
-                    new Subtraction(
-                        box,
-                        spheres,
-                    ),
-                    new Subtraction(
-                        new Box(3, 10, 3),
-                        new Sphere(5, 0, 0, 5)
+    const shape0 =
+        new Intersection(
+            new Union(
+                new Box(1, 1, 2),
+                new Subtraction(
+                    new Box(20, 2, 2),
+                    new Union(
+                        new Subtraction(
+                            box,
+                            spheres,
+                        ),
+                        new Subtraction(
+                            new Box(3, 10, 3),
+                            new Sphere(5, 0, 0, 5)
+                        )
                     )
                 )
             )
         )
-    )
 
-    const shape1 = new Box(2, 2, 2)
+    const shape =
+        new Transform(
+            new Subtraction(
+                new Box(4, 4, 4),
+                new Transform(shape0).set(({ position, rotation }) => {
+                    rotation.x = Math.PI / 5
+                    rotation.y = Math.PI * 1.5
+                })
+            )
+        ).set(({ position }) => position.y = 4)
 
-    const shape = new Subtraction(
-        shape1,
-        new Transform(shape0).set(({ position, rotation }) => {
-            position.x = 4
-            rotation.x = Math.PI / 4
-            rotation.y = Math.PI / 4
-        })
-    )
-    const dims = [64, 64, 64]
+    //const dims = [64, 64, 64]
     const bounds = [[-11, -11, -11], [11, 11, 11]]
-
+    const density = 4
+    const dims = [
+        (bounds[1][0] - bounds[0][0]) * density,
+        (bounds[1][1] - bounds[0][1]) * density,
+        (bounds[1][2] - bounds[0][2]) * density,
+    ]
     const p = new Vector3()
     var mesh = surfaceNets(dims, (x, y, z) => {
         p.set(x, y, z)
