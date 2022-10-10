@@ -33,10 +33,10 @@ onmessage = function (e) {
         )
     )
 
-    const shape = new Box(2, 2, 2)
+    const shape1 = new Box(2, 2, 2)
 
-    const transform = new Subtraction(
-        shape,
+    const shape = new Subtraction(
+        shape1,
         new Transform(shape0).set(({ position, rotation }) => {
             position.x = 4
             rotation.x = Math.PI / 4
@@ -49,8 +49,7 @@ onmessage = function (e) {
     const p = new Vector3()
     var mesh = surfaceNets(dims, (x, y, z) => {
         p.set(x, y, z)
-        //        const pp = transforms.apply(p.set(x, y, z))
-        return transform.sdf(p)
+        return shape.sdf(p)
     }, bounds)
 
     const vertices = cellPositionMeshToVerticesArray(mesh)
