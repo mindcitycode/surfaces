@@ -35,7 +35,7 @@ const composer = new EffectComposer(renderer);
         const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
         ssaoPass.kernelRadius = 1;
         composer.addPass(ssaoPass);
-      
+
         const strength = 0.25
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
         composer.addPass(bloomPass);
@@ -51,13 +51,13 @@ const composer = new EffectComposer(renderer);
             greyscale: false,
             disable: false
         };
-      
+
         const halftonePass = new HalftonePass(window.innerWidth, window.innerHeight, params);
         composer.addPass(halftonePass)
     }
 }
 {
-    const geometry = new THREE.PlaneGeometry(30, 30).rotateX(-Math.PI / 2).translate(0, -7, 0)
+    const geometry = new THREE.PlaneGeometry(100, 100).rotateX(-Math.PI / 2).translate(0, -11, 0)
     const material = new THREE.MeshPhysicalMaterial()
     const mesh = new THREE.Mesh(geometry, material)
     mesh.castShadow = true

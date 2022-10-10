@@ -1,4 +1,4 @@
-import { Vector3, Quaternion, Euler, Matrix4 } from 'three'
+import { Vector3, Quaternion, Euler, Matrix4, Vector2 } from 'three'
 
 export class Sphere {
     constructor(radius, cx = 0, cy = 0, cz = 0) {
@@ -28,6 +28,35 @@ export class Box {
         const t1 = Box.q1.copy(Box.q).max(Box.v000).length()
         const t2 = Math.min(Math.max(Box.q.x, Math.max(Box.q.y, Box.q.z)), 0)
         return t1 + t2
+    }
+}
+export class Torus {
+    pxz = new Vector2()
+    q = new Vector2()
+    constructor(tx, ty) {
+        Object.assign(this, { tx, ty })
+    }
+    sdf(p) {
+        this.q.set(this.pxz.set(p.x, p.z).length() - this.tx, p.y)
+        return this.q.length() - this.ty
+    }
+}
+export class InfiniteCylinder {
+    /*
+    float sdCylinder( vec3 p, vec3 c )
+    {
+      return length(p.xz-c.xy)-c.z;
+    }
+    */
+    cxy = new Vector2()
+    pxz = new Vector2()
+    constructor(radius, cx = 0, cy = 0) {
+        this.radius = radius
+        this.cxy.set(cx, cy)
+    }
+
+    sdf(p) {
+        return this.pxz.set(p.x, p.z).sub(this.cxy).length() - this.radius
     }
 }
 export class Union {
@@ -98,7 +127,7 @@ export class CachedShape {
         //            const id = `${p.x}_${p.y}_${p.z}`
         const id = [p.x, p.y, p.z].join('_')
         const cached = this.#cache.get(id)
-        if (cached) {
+        if (cached !== undefined) {
             return cached
         } else {
             const sdf = this.shape.sdf(p)
