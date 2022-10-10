@@ -35,21 +35,22 @@ onmessage = function (e) {
 
     const shape = new Box(2, 2, 2)
 
-    const transforms = new Transform()
-    transforms.position.x = 4
-    transforms.scale.set(1, 1, 1)
-    transforms.rotation.x = Math.PI / 4
-    transforms.rotation.y = Math.PI / 4
-    transforms.update()
-
+    const transform = new Subtraction(
+        shape,
+        new Transform(shape0).set(({ position, rotation }) => {
+            position.x = 4
+            rotation.x = Math.PI / 4
+            rotation.y = Math.PI / 4
+        })
+    )
     const dims = [64, 64, 64]
     const bounds = [[-11, -11, -11], [11, 11, 11]]
 
     const p = new Vector3()
     var mesh = surfaceNets(dims, (x, y, z) => {
         p.set(x, y, z)
-        const pp = transforms.apply(p.set(x, y, z))
-        return shape.sdf(pp)
+        //        const pp = transforms.apply(p.set(x, y, z))
+        return transform.sdf(p)
     }, bounds)
 
     const vertices = cellPositionMeshToVerticesArray(mesh)

@@ -93,17 +93,29 @@ export class Transform {
     position = new Vector3()
     #quaternion = new Quaternion()
     rotation = new Euler()
-    scale = new Vector3()
+    scale = new Vector3(1,1,1)
     m4 = new Matrix4()
     #transformed = new Vector3()
-    update() {
+
+    constructor(shape) {
+        Object.assign(this, { shape })
+    }
+    updateMatrix() {
         this.#quaternion.setFromEuler(this.rotation)
         this.m4.compose(this.position, this.#quaternion, this.scale)
         this.m4.invert()
+    }
+    set( f ){
+        f(this)
+        this.updateMatrix()
+        return this
     }
     apply(p) {
         this.#transformed.copy(p)
         this.#transformed.applyMatrix4(this.m4)
         return this.#transformed
+    }
+    sdf(p) {
+        return this.shape.sdf(this.apply(p))
     }
 }
