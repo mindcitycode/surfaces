@@ -4,13 +4,19 @@ import { positionNormalToThreeGeometry } from './geometry.js'
 import * as THREE from 'three'
 import './style/style.css'
 
+const resize = (width, height) => {
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+}
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+
 document.body.appendChild(renderer.domElement);
 
-scene.add(new THREE.AxesHelper(10,10,10))
+scene.add(new THREE.AxesHelper(10, 10, 10))
 
 const ambientLight = new THREE.AmbientLight()
 ambientLight.intensity = 0.5
@@ -23,7 +29,9 @@ scene.add(directionalLight);
 const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.z = -20
 
+
 rafLoop((delta, time) => {
+    resize(window.innerWidth, window.innerHeight)
     controls.update();
     renderer.render(scene, camera);
 })
@@ -34,7 +42,7 @@ surfaceWorker.onmessage = event => {
     const material = new THREE.MeshStandardMaterial({
         //wireframe:true
     })
-    const mesh = new THREE.Mesh(geometry, material);    
+    const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh)
 };
 surfaceWorker.postMessage(0);
