@@ -6,6 +6,7 @@ import './style/style.css'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { HalftonePass } from 'three/addons/postprocessing/HalftonePass.js';
 
 const resize = (width, height) => {
     camera.aspect = width / height;
@@ -30,7 +31,21 @@ const composer = new EffectComposer(renderer);
     const strength = 0.25
     const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
     composer.addPass(bloomPass);
-
+    const params = {
+        shape: 1,
+        radius: 4,
+        rotateR: Math.PI / 12,
+        rotateB: Math.PI / 12 * 2,
+        rotateG: Math.PI / 12 * 3,
+        scatter: 0,
+        blending: 1,
+        blendingMode: 1,
+        greyscale: false,
+        disable: false
+    };
+    const halftonePass = new HalftonePass( window.innerWidth, window.innerHeight, params );
+    composer.addPass(halftonePass)
+				
 }
 
 {
