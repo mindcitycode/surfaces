@@ -7,6 +7,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { HalftonePass } from 'three/addons/postprocessing/HalftonePass.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
 const resize = (width, height) => {
     camera.aspect = width / height;
@@ -21,31 +22,40 @@ const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 document.body.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 
+
+const POST_PROCESSING = false
 
 const composer = new EffectComposer(renderer);
 {
-    const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-    ssaoPass.kernelRadius = 1;
-    composer.addPass(ssaoPass);
-    const strength = 0.25
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
-    composer.addPass(bloomPass);
-    const params = {
-        shape: 1,
-        radius: 4,
-        rotateR: Math.PI / 12,
-        rotateB: Math.PI / 12 * 2,
-        rotateG: Math.PI / 12 * 3,
-        scatter: 0,
-        blending: 1,
-        blendingMode: 1,
-        greyscale: false,
-        disable: false
-    };
-    const halftonePass = new HalftonePass( window.innerWidth, window.innerHeight, params );
-    composer.addPass(halftonePass)
-				
+
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass)
+    if (POST_PROCESSING) {
+
+        const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+        ssaoPass.kernelRadius = 1;
+        composer.addPass(ssaoPass);
+        const strength = 0.25
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
+        composer.addPass(bloomPass);
+        const params = {
+            shape: 1,
+            radius: 4,
+            rotateR: Math.PI / 12,
+            rotateB: Math.PI / 12 * 2,
+            rotateG: Math.PI / 12 * 3,
+            scatter: 0,
+            blending: 1,
+            blendingMode: 1,
+            greyscale: false,
+            disable: false
+        };
+        const halftonePass = new HalftonePass(window.innerWidth, window.innerHeight, params);
+        composer.addPass(halftonePass)
+
+    }
 }
 
 {
@@ -56,26 +66,27 @@ const composer = new EffectComposer(renderer);
     mesh.receiveShadow = true
     scene.add(mesh)
 }
+{
+    scene.add(new THREE.AxesHelper(10, 10, 10))
+}
 
+{
+    const ambientLight = new THREE.AmbientLight()
+    ambientLight.intensity = 0.15
+    scene.add(ambientLight);
+}
+{
+    const directionalLight = new THREE.DirectionalLight()
+    directionalLight.position.set(-2, 15, -4)
+    directionalLight.intensity = 0.85
+    directionalLight.castShadow = true
+    directionalLight.shadow.mapSize.width = 512 * 4; // default
+    directionalLight.shadow.mapSize.height = 512 * 4; // default
+    directionalLight.shadow.camera.near = 0.5; // default
+    directionalLight.shadow.camera.far = 500; // default
+    scene.add(directionalLight);
 
-
-scene.add(new THREE.AxesHelper(10, 10, 10))
-
-const ambientLight = new THREE.AmbientLight()
-ambientLight.intensity = 0.15
-scene.add(ambientLight);
-
-const directionalLight = new THREE.DirectionalLight()
-directionalLight.position.set(-2, 15, -4)
-directionalLight.intensity = 0.85
-directionalLight.castShadow = true
-directionalLight.shadow.mapSize.width = 512 * 4; // default
-directionalLight.shadow.mapSize.height = 512 * 4; // default
-directionalLight.shadow.camera.near = 0.5; // default
-directionalLight.shadow.camera.far = 500; // default
-
-scene.add(directionalLight);
-const controls = new OrbitControls(camera, renderer.domElement);
+}
 camera.position.set(13.2, 9.8, 8.3)
 
 rafLoop((delta, time) => {
