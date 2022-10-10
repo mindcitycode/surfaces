@@ -9,25 +9,14 @@ export class Sphere {
         })
     }
     sdf(p) {
-        //return this.center.distanceToSquared(p) - this.squaredRadius
         return this.center.distanceTo(p) - this.radius
     }
 }
-//const q = new Vector3()
 
 export class Box {
-    //static #q = new Vector3()
     static q = new Vector3()
     static q1 = new Vector3()
     static v000 = new Vector3(0, 0, 0)
-    /*
-    
-float sdBox( vec3 p, vec3 b )
-{
-  vec3 q = abs(p) - b;
-  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
-}
-*/
     constructor(x, y, z) {
         Object.assign(this, {
             b: new Vector3(x, y, z),
@@ -66,29 +55,6 @@ export class Subtraction {
     }
 }
 
-
-export class CachedShape {
-
-    // is slower for not so complex shapes
-
-    #cache = new Map()
-    constructor(shape) {
-        Object.assign(this, { shape })
-    }
-    sdf(p) {
-        //            const id = `${p.x}_${p.y}_${p.z}`
-        const id = [p.x, p.y, p.z].join('_')
-        const cached = this.#cache.get(id)
-        if (cached) {
-            return cached
-        } else {
-            const sdf = this.shape.sdf(p)
-            this.#cache.set(id, sdf)
-            return sdf
-        }
-    }
-}
-
 export class Transform {
     position = new Vector3()
     #quaternion = new Quaternion()
@@ -119,3 +85,26 @@ export class Transform {
         return this.shape.sdf(this.apply(p))
     }
 }
+
+export class CachedShape {
+
+    // is slower for not so complex shapes
+
+    #cache = new Map()
+    constructor(shape) {
+        Object.assign(this, { shape })
+    }
+    sdf(p) {
+        //            const id = `${p.x}_${p.y}_${p.z}`
+        const id = [p.x, p.y, p.z].join('_')
+        const cached = this.#cache.get(id)
+        if (cached) {
+            return cached
+        } else {
+            const sdf = this.shape.sdf(p)
+            this.#cache.set(id, sdf)
+            return sdf
+        }
+    }
+}
+
