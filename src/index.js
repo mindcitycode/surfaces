@@ -17,7 +17,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
 {
-    const geometry = new THREE.PlaneGeometry(30, 30).rotateX(-Math.PI / 2)
+    const geometry = new THREE.PlaneGeometry(30, 30).rotateX(-Math.PI / 2).translate(0, -5, 0)
     const material = new THREE.MeshPhysicalMaterial({
         //wireframe:true
     })
@@ -37,18 +37,18 @@ ambientLight.intensity = 0.15
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight()
-directionalLight.position.set(-2,15,-4)
+directionalLight.position.set(-2, 15, -4)
 directionalLight.intensity = 0.85
 directionalLight.castShadow = true
-directionalLight.shadow.mapSize.width = 512*4; // default
-directionalLight.shadow.mapSize.height = 512*4; // default
+directionalLight.shadow.mapSize.width = 512 * 4; // default
+directionalLight.shadow.mapSize.height = 512 * 4; // default
 directionalLight.shadow.camera.near = 0.5; // default
 directionalLight.shadow.camera.far = 500; // default
 
 scene.add(directionalLight);
 //scene.add(new THREE.DirectionalLightHelper(directionalLight))
 const controls = new OrbitControls(camera, renderer.domElement);
-camera.position.set(13.2,9.8,8.3)
+camera.position.set(13.2, 9.8, 8.3)
 
 rafLoop((delta, time) => {
     resize(window.innerWidth, window.innerHeight)

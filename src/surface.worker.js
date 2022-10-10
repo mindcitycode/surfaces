@@ -47,7 +47,7 @@ onmessage = function (e) {
 
     //const dims = [64, 64, 64]
     const bounds = [[-11, -11, -11], [11, 11, 11]]
-    const density = 4
+    const density = 5
     const dims = [
         (bounds[1][0] - bounds[0][0]) * density,
         (bounds[1][1] - bounds[0][1]) * density,
