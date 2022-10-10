@@ -29,7 +29,6 @@ scene.add(directionalLight);
 const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.z = -20
 
-
 rafLoop((delta, time) => {
     resize(window.innerWidth, window.innerHeight)
     controls.update();

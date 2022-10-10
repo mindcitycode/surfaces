@@ -1,8 +1,9 @@
 import { surfaceNets, marchingCubes } from 'isosurface'
 import { cellPositionMeshToVerticesArray, verticesToPositionNormal } from './geometry.js'
-const clog = txt => console.log("%c[surface-worker]%c " + txt, "color:orange;background-color:black;", "color:black")
 import { Vector3 } from 'three'
 import { Sphere, Subtraction, Union, Intersection, Box, CachedShape } from './sdf.js'
+
+const clog = txt => console.log("%c[surface-worker]%c " + txt, "color:orange;background-color:black;", "color:black")
 
 onmessage = function (e) {
     const startedAt = performance.now()
@@ -49,11 +50,3 @@ onmessage = function (e) {
     postMessage(positionNormal);
 
 }
-/*
-        const coords = { x: {}, y: {}, z: {} }
-        coords.x[x] = 1 + (coords.x[x] || 0)
-        coords.y[y] = 1 + (coords.y[y] || 0)
-        coords.z[z] = 1 + (coords.z[z] || 0)
-    console.log(coords)
-
-    */
