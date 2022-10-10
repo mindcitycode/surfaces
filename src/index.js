@@ -24,9 +24,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 
-
 const POST_PROCESSING = false
-
 const composer = new EffectComposer(renderer);
 {
 
@@ -37,6 +35,7 @@ const composer = new EffectComposer(renderer);
         const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
         ssaoPass.kernelRadius = 1;
         composer.addPass(ssaoPass);
+      
         const strength = 0.25
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
         composer.addPass(bloomPass);
@@ -52,14 +51,13 @@ const composer = new EffectComposer(renderer);
             greyscale: false,
             disable: false
         };
+      
         const halftonePass = new HalftonePass(window.innerWidth, window.innerHeight, params);
         composer.addPass(halftonePass)
-
     }
 }
-
 {
-    const geometry = new THREE.PlaneGeometry(30, 30).rotateX(-Math.PI / 2).translate(0, -5, 0)
+    const geometry = new THREE.PlaneGeometry(30, 30).rotateX(-Math.PI / 2).translate(0, -7, 0)
     const material = new THREE.MeshPhysicalMaterial()
     const mesh = new THREE.Mesh(geometry, material)
     mesh.castShadow = true
@@ -69,7 +67,6 @@ const composer = new EffectComposer(renderer);
 {
     scene.add(new THREE.AxesHelper(10, 10, 10))
 }
-
 {
     const ambientLight = new THREE.AmbientLight()
     ambientLight.intensity = 0.15
@@ -85,8 +82,8 @@ const composer = new EffectComposer(renderer);
     directionalLight.shadow.camera.near = 0.5; // default
     directionalLight.shadow.camera.far = 500; // default
     scene.add(directionalLight);
-
 }
+
 camera.position.set(13.2, 9.8, 8.3)
 
 rafLoop((delta, time) => {

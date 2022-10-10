@@ -5,10 +5,7 @@ import { Sphere, Subtraction, Union, Intersection, Box, CachedShape, Transform }
 
 const clog = txt => console.log("%c[surface-worker]%c " + txt, "color:orange;background-color:black;", "color:black")
 
-onmessage = function (e) {
-    const startedAt = performance.now()
-    clog("computing surface net and normals....")
-
+const demoShape = () => {
     const sphere0 = new Sphere(5, 3, 0, 0)
     const sphere1 = new Sphere(5, -3, 0, 0)
     const spheres = new Subtraction(sphere0, sphere1)
@@ -44,10 +41,16 @@ onmessage = function (e) {
                 })
             )
         ).set(({ position }) => position.y = 4)
+    return shape
+}
 
-    //const dims = [64, 64, 64]
+onmessage = function (e) {
+    clog("computing surface net and normals....")
+    const startedAt = performance.now()
+
+    const shape = new Subtraction(new Box(5,5,5),new Sphere(6))
     const bounds = [[-11, -11, -11], [11, 11, 11]]
-    const density = 1//5
+    const density = 8//5
     const dims = [
         (bounds[1][0] - bounds[0][0]) * density,
         (bounds[1][1] - bounds[0][1]) * density,
