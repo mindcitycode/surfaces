@@ -28,9 +28,9 @@ const composer = new EffectComposer(renderer);
     ssaoPass.kernelRadius = 1;
     composer.addPass(ssaoPass);
     const strength = 0.25
-    const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), strength , 0.4, 0.85 );
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), strength, 0.4, 0.85);
     composer.addPass(bloomPass);
-    
+
 }
 
 {
