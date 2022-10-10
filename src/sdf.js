@@ -1,4 +1,4 @@
-import { Vector3 } from 'three'
+import { Vector3, Quaternion, Euler, Matrix4 } from 'three'
 
 export class Sphere {
     constructor(cx, cy, cz, radius) {
@@ -86,5 +86,24 @@ export class CachedShape {
             this.#cache.set(id, sdf)
             return sdf
         }
+    }
+}
+
+export class Transform {
+    position = new Vector3()
+    #quaternion = new Quaternion()
+    rotation = new Euler()
+    scale = new Vector3()
+    m4 = new Matrix4()
+    #transformed = new Vector3()
+    update() {
+        this.#quaternion.setFromEuler(this.rotation)
+        this.m4.compose(this.position, this.#quaternion, this.scale)
+        this.m4.invert()
+    }
+    apply(p) {
+        this.#transformed.copy(p)
+        this.#transformed.applyMatrix4(this.m4)
+        return this.#transformed
     }
 }
