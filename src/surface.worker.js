@@ -9,8 +9,8 @@ onmessage = function (e) {
     const startedAt = performance.now()
     clog("computing surface net and normals....")
 
-    const sphere0 = new Sphere(3, 0, 0, 5)
-    const sphere1 = new Sphere(-3, 0, 0, 5)
+    const sphere0 = new Sphere(5, 3, 0, 0)
+    const sphere1 = new Sphere(5, -3, 0, 0)
     const spheres = new Subtraction(sphere0, sphere1)
     const box = new Box(1, 2, 4)
 
@@ -27,7 +27,7 @@ onmessage = function (e) {
                         ),
                         new Subtraction(
                             new Box(3, 10, 3),
-                            new Sphere(5, 0, 0, 5)
+                            new Sphere(5, 5, 0, 0)
                         )
                     )
                 )

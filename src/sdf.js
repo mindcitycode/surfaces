@@ -1,7 +1,7 @@
 import { Vector3, Quaternion, Euler, Matrix4 } from 'three'
 
 export class Sphere {
-    constructor(cx, cy, cz, radius) {
+    constructor(radius, cx = 0, cy = 0, cz = 0) {
         Object.assign(this, {
             center: new Vector3(cx, cy, cz),
             radius,
@@ -59,7 +59,7 @@ export class Transform {
     position = new Vector3()
     #quaternion = new Quaternion()
     rotation = new Euler()
-    scale = new Vector3(1,1,1)
+    scale = new Vector3(1, 1, 1)
     m4 = new Matrix4()
     #transformed = new Vector3()
 
@@ -71,7 +71,7 @@ export class Transform {
         this.m4.compose(this.position, this.#quaternion, this.scale)
         this.m4.invert()
     }
-    set( f ){
+    set(f) {
         f(this)
         this.updateMatrix()
         return this
