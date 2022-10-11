@@ -86,7 +86,7 @@ const composer = new EffectComposer(renderer);
     pointLight.shadow.camera.near = 0.5; // default
     pointLight.shadow.camera.far = 500; // default
     scene.add(pointLight);
-    scene.add(new PointLightHelper(pointLight))
+    //scene.add(new PointLightHelper(pointLight))
 }
 
 camera.position.set(13.2, 9.8, 8.3)
