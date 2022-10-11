@@ -1,7 +1,7 @@
 {
   "name": "surfaces",
   "version": "1.0.0",
-  "description": "Surfaces",
+  "description": "Build and display meshes defined by signed distannce functions",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

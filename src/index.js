@@ -91,8 +91,7 @@ const composer = new EffectComposer(renderer);
 
 camera.position.set(13.2, 9.8, 8.3)
 
-let u = undefined
-rafLoop((delta, time) => {
+FrafLoop((delta, time) => {
     resize(window.innerWidth, window.innerHeight)
     controls.update();
     composer.render()
