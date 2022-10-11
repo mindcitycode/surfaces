@@ -97,11 +97,9 @@ const demoshape3 = () => {
 
     )
 }
-onmessage = function (e) {
-    clog("computing surface net and normals....")
-    const startedAt = performance.now()
 
-    const shape = new Union(
+const demoshape4 = () => {
+    return new Union(
         new Sphere(3, 0, 5, 0),
         new Subtraction(
             new Torus(5, 3),
@@ -111,7 +109,50 @@ onmessage = function (e) {
             ),
         )
     )
-    const density = 2 //5//8//5
+}
+
+/*
+vec3 calcNormal( in vec3 p ) // for function f(p)
+{
+    const float eps = 0.0001; // or some other value
+    const vec2 h = vec2(eps,0);
+    return normalize( vec3(f(p+h.xyy) - f(p-h.xyy),
+                           f(p+h.yxy) - f(p-h.yxy),
+                           f(p+h.yyx) - f(p-h.yyx) ) );
+}
+*/
+
+
+const p1 = new Vector3()
+const p2 = new Vector3()
+const p3 = new Vector3()
+const p4 = new Vector3()
+const p5 = new Vector3()
+const p6 = new Vector3()
+
+const computeNormalFor = f => (p, normal) => {
+    const eps = 0.0001;
+    p1.set(p.x + eps, p.y, p.z)
+    p2.set(p.x - eps, p.y, p.z)
+    p3.set(p.x, p.y + eps, p.z)
+    p4.set(p.x, p.y - eps, p.z)
+    p5.set(p.x, p.y, p.z + eps)
+    p6.set(p.x, p.y, p.z - eps)
+    normal.set(
+        f(p1) - f(p2),
+        f(p3) - f(p4),
+        f(p5) - f(p6),
+    ).normalize()
+}
+
+onmessage = function (e) {
+    clog("computing surface net and normals....")
+    const startedAt = performance.now()
+
+   // const shape = new InfiniteCylinder(5)
+       const shape = new Box(5, 5, 5)
+    //const shape = new Sphere(5)
+    const density = 1 //5//8//5
     const bounds = [[-11, -11, -11], [11, 11, 11]]
     const dims = [
         (bounds[1][0] - bounds[0][0]) * density,
@@ -128,6 +169,25 @@ onmessage = function (e) {
     const vertices = cellPositionMeshToVerticesArray(mesh)
     const positionNormal = verticesToPositionNormal(vertices)
 
+    clog("computing  normals....")
+
+    if (true) {
+        const normal = new Vector3()
+        const computeNormal = computeNormalFor(p => shape.sdf(p))
+        for (let i = 0; i < positionNormal.position.length; i += 3) {
+            p.set(
+                positionNormal.position[i],
+                positionNormal.position[i + 1],
+                positionNormal.position[i + 2]
+            )
+            computeNormal(p, normal)
+            positionNormal.normal[i] = normal.x
+            positionNormal.normal[i + 1] = normal.y
+            positionNormal.normal[i + 2] = normal.z
+        }
+    }
+
+    console.log(positionNormal)
     clog(`done, took ${this.performance.now() - startedAt}ms ,  ${(this.performance.now() - startedAt) / 1000}s`)
 
     postMessage(positionNormal);

@@ -8,6 +8,7 @@ import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { HalftonePass } from 'three/addons/postprocessing/HalftonePass.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 const resize = (width, height) => {
     camera.aspect = width / height;
@@ -86,8 +87,14 @@ const composer = new EffectComposer(renderer);
 
 camera.position.set(13.2, 9.8, 8.3)
 
+let u = undefined
 rafLoop((delta, time) => {
     resize(window.innerWidth, window.innerHeight)
+    
+    if (u ){
+        u.rotation.y += Math.PI/8*delta
+        u.rotation.x += Math.PI/16*delta
+    }
     controls.update();
     composer.render()
 })
@@ -97,8 +104,13 @@ surfaceWorker.onmessage = event => {
     const geometry = positionNormalToThreeGeometry(event.data)
     const material = new THREE.MeshPhysicalMaterial()
     const mesh = new THREE.Mesh(geometry, material);
+
+    const helper = new VertexNormalsHelper( mesh, 1, 0xff0000 );
+    mesh.add(helper)
+
     mesh.castShadow = true
     mesh.receiveShadow = true
+    u = mesh
     scene.add(mesh)
 };
 surfaceWorker.postMessage(0);
