@@ -137,3 +137,29 @@ export class CachedShape {
     }
 }
 
+export const computeNormalFor = sdf => {
+
+    const _normal = new Vector3()
+
+    const p1 = new Vector3()
+    const p2 = new Vector3()
+    const p3 = new Vector3()
+    const p4 = new Vector3()
+    const p5 = new Vector3()
+    const p6 = new Vector3()
+
+    return (p, normal = _normal) => {
+        const eps = 0.0001;
+        p1.set(p.x + eps, p.y, p.z)
+        p2.set(p.x - eps, p.y, p.z)
+        p3.set(p.x, p.y + eps, p.z)
+        p4.set(p.x, p.y - eps, p.z)
+        p5.set(p.x, p.y, p.z + eps)
+        p6.set(p.x, p.y, p.z - eps)
+        return normal.set(
+            sdf(p1) - sdf(p2),
+            sdf(p3) - sdf(p4),
+            sdf(p5) - sdf(p6),
+        ).normalize()
+    }
+}

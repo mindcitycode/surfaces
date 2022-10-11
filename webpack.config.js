@@ -39,6 +39,12 @@ const config = {
             },
         ],
     },
+    /*
+    resolve : {
+        fallback : {
+            "buffer" : false 
+        }
+    }*/
 }
 
 module.exports = (env, args) => {

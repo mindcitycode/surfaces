@@ -1,7 +1,7 @@
 import { surfaceNets, marchingCubes } from 'isosurface'
 import { cellPositionMeshToVerticesArray, verticesToPositionNormal } from './geometry.js'
 import { Vector3 } from 'three'
-import { Sphere, Subtraction, Union, Intersection, Box, CachedShape, Transform, Torus, InfiniteCylinder } from './sdf.js'
+import { Sphere, Subtraction, Union, Intersection, Box, CachedShape, Transform, Torus, InfiniteCylinder, computeNormalFor } from './sdf.js'
 
 const clog = txt => console.log("%c[surface-worker]%c " + txt, "color:orange;background-color:black;", "color:black")
 
@@ -21,24 +21,26 @@ const demoShape = () => {
     const box = new Box(1, 2, 4)
 
     const shape0 =
-        new Intersection(
-            new Union(
-                new Box(1, 1, 2),
-                new Subtraction(
-                    new Box(20, 2, 2),
-                    new Union(
-                        new Subtraction(
-                            box,
-                            spheres,
-                        ),
-                        new Subtraction(
-                            new Box(3, 10, 3),
-                            new Sphere(5, 5, 0, 0)
+        new Transform(
+            new Intersection(
+                new Union(
+                    new Box(1, 1, 2),
+                    new Subtraction(
+                        new Box(20, 2, 2),
+                        new Union(
+                            new Subtraction(
+                                box,
+                                spheres,
+                            ),
+                            new Subtraction(
+                                new Box(3, 10, 3),
+                                new Sphere(5, 5, 0, 0)
+                            )
                         )
                     )
                 )
             )
-        )
+        ).set(({ rotation }) => rotation.y = -Math.PI / 6).set(({ position }) => position.y = -4)
 
     const shape =
         new Transform(
@@ -66,7 +68,7 @@ const demoShape1 = new Union(
     ),
     new Sphere(4),
 )
-const demoshape2 = () => {
+const demoShape2 = () => {
     const hollowTorus = (x, y) => new Subtraction(
         new Torus(x, y - 0.5),
         new Torus(x, y)
@@ -84,7 +86,7 @@ const demoshape2 = () => {
     )
     return shape
 }
-const demoshape3 = () => {
+const demoShape3 = () => {
     const box = new Transform(new Box(2, 4, 1)).set(({ rotation }) => rotation.x = Math.PI / 8)
     const sphere = new Sphere(3)
     const torus = new Torus(3, 1)
@@ -98,7 +100,7 @@ const demoshape3 = () => {
     )
 }
 
-const demoshape4 = () => {
+const demoShape4 = () => {
     return new Union(
         new Sphere(3, 0, 5, 0),
         new Subtraction(
@@ -110,49 +112,25 @@ const demoshape4 = () => {
         )
     )
 }
-
-/*
-vec3 calcNormal( in vec3 p ) // for function f(p)
-{
-    const float eps = 0.0001; // or some other value
-    const vec2 h = vec2(eps,0);
-    return normalize( vec3(f(p+h.xyy) - f(p-h.xyy),
-                           f(p+h.yxy) - f(p-h.yxy),
-                           f(p+h.yyx) - f(p-h.yyx) ) );
-}
-*/
-
-
-const p1 = new Vector3()
-const p2 = new Vector3()
-const p3 = new Vector3()
-const p4 = new Vector3()
-const p5 = new Vector3()
-const p6 = new Vector3()
-
-const computeNormalFor = f => (p, normal) => {
-    const eps = 0.0001;
-    p1.set(p.x + eps, p.y, p.z)
-    p2.set(p.x - eps, p.y, p.z)
-    p3.set(p.x, p.y + eps, p.z)
-    p4.set(p.x, p.y - eps, p.z)
-    p5.set(p.x, p.y, p.z + eps)
-    p6.set(p.x, p.y, p.z - eps)
-    normal.set(
-        f(p1) - f(p2),
-        f(p3) - f(p4),
-        f(p5) - f(p6),
-    ).normalize()
-}
-
 onmessage = function (e) {
     clog("computing surface net and normals....")
     const startedAt = performance.now()
 
-   // const shape = new InfiniteCylinder(5)
-       const shape = new Box(5, 5, 5)
-    //const shape = new Sphere(5)
-    const density = 1 //5//8//5
+    const shape = new Transform(
+        new Union(
+            new Subtraction(
+                new Transform(new Box(3, 3, 3)).set(({ position }) => position.set(3, 3, 3)),
+                new Union(
+                    new Subtraction(new InfiniteCylinder(2), new Subtraction(new Sphere(5), new Sphere(6))),
+                    new Torus(6, 2)
+                ),
+            ),
+            new Subtraction(new Box(2, 4, 2),
+                new Subtraction(new Sphere(3), new Sphere(4))
+            )
+        )).set(({rotation})=>rotation.set(Math.PI/6,Math.PI/8,-Math.PI/8))
+    
+    const density = e.data.density || 1 //5//8//5
     const bounds = [[-11, -11, -11], [11, 11, 11]]
     const dims = [
         (bounds[1][0] - bounds[0][0]) * density,
@@ -172,15 +150,14 @@ onmessage = function (e) {
     clog("computing  normals....")
 
     if (true) {
-        const normal = new Vector3()
-        const computeNormal = computeNormalFor(p => shape.sdf(p))
+        const computeNormal = computeNormalFor(shape.sdf.bind(shape))
         for (let i = 0; i < positionNormal.position.length; i += 3) {
             p.set(
                 positionNormal.position[i],
                 positionNormal.position[i + 1],
                 positionNormal.position[i + 2]
             )
-            computeNormal(p, normal)
+            const normal = computeNormal(p)
             positionNormal.normal[i] = normal.x
             positionNormal.normal[i + 1] = normal.y
             positionNormal.normal[i + 2] = normal.z
