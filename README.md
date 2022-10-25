@@ -22,4 +22,4 @@ build
 
 ## license
 
-surfaces is licensed under the agpl-3.0 license
+surfaces is licensed under the AGPL-3.0-only license
